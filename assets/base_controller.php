@@ -1,6 +1,6 @@
 <?php
 class BaseController {
-	protected $config = array(
+	public $config = array(
 		'login'=>'demo',
 		'password'=>'demo',
 		'salt' => 'ndcgh;l2;lga',
@@ -44,7 +44,7 @@ class BaseController {
 
 	    return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
 	}
-	protected function makeHash () {
+	protected function makeHash ($req) {
 		return md5($req['login'].$req['salt'].$req['password']);
 	}
 	function encode () {
@@ -70,7 +70,7 @@ class BaseController {
 		return $path;
 	}
 	function checkAuth () {
-		if (isset($_COOKIE[COOKIE_NAME]) and $_COOKIE[COOKIE_NAME] === $this->makeHash()) {
+		if (isset($_COOKIE[COOKIE_NAME]) and $_COOKIE[COOKIE_NAME] === $this->makeHash($this->config)) {
 			return true;
 		}
 		$this->error = 2;

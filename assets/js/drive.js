@@ -12,7 +12,7 @@
 			files_box = null,
 			progress_bar = null,
 			i = 0,
-			template = '<div data-type="{type}" data-name="{name_decode}" class="xdsoft_file">'+
+			template = '<div data-type="{type}" data-name="{name_decode}" class="xdsoft_file {type}">'+
 				'<div class="xdsoft_preview"><img src="assets/images/types/{type}.png"></div>'+
 				'<div class="xdsoft_filename">{name}</div>'+
 				'<div class="xdsoft_filesize">{size}</div>'+
@@ -167,7 +167,10 @@
 			login = explorer.find('.xdsoft_login').eq(0);
 			files_box = explorer.find('.xdsoft_files').eq(0);
 			progress_bar = explorer.find('.xdsoft_progressbar>div').eq(0);
-
+			login
+				.on('mousedown', function(event) {
+					event.stopPropagation();
+				})
 			menu
 				.on('mousedown','a', function(event) {
 					if (methods[$(this).attr('class')]) {

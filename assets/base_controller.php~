@@ -18,8 +18,8 @@ class BaseController {
 	    7 => 'Failed to write file to disk.',
 	    8 => 'A PHP extension stopped the file upload.',
 	);
-	protected public $error = 0;
-	protected public $data = array();
+	protected  $error = 0;
+	protected  $data = array();
 
 	function __construct() {
 		$this->config = array_merge($this->config, include ROOT.'assets/config.php');
@@ -44,7 +44,7 @@ class BaseController {
 
 	    return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
 	}
-	protected function makeHash () {
+	protected function makeHash ($req) {
 		return md5($req['login'].$req['salt'].$req['password']);
 	}
 	function encode () {
@@ -70,7 +70,7 @@ class BaseController {
 		return $path;
 	}
 	function checkAuth () {
-		if (isset($_COOKIE[COOKIE_NAME]) and $_COOKIE[COOKIE_NAME] === $this->makeHash()) {
+		if (isset($_COOKIE[COOKIE_NAME]) and $_COOKIE[COOKIE_NAME] === $this->makeHash($this->config)) {
 			return true;
 		}
 		$this->error = 2;

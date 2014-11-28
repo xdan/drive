@@ -131,6 +131,9 @@ display: none;
 	text-align: left;
 	z-index:1;
 }
+.xdsoft_drive .xdsoft_file.folder .xdsoft_hint{
+	display: none !important;
+}
 
 .xdsoft_drive .xdsoft_files.table_layout .xdsoft_preview{
 	width:30px;
@@ -275,12 +278,17 @@ background-color:#3399ff;
 	bottom:5px;
 	z-index:4;
 }
+.xdsoft_drive .xdsoft_manage_block a{
+	z-index: 4;
+	display: inline-block;
+}
 .xdsoft_drive .xdsoft_manage_block a img{
 	width:16px;
 	height:16px;
 	opacity:0.5;
 	margin:5px;
 	margin:1px;
+	z-index: 2;
 }
 .xdsoft_drive .xdsoft_manage_block a:hover img{
 	opacity:0.7;

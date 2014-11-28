@@ -27,7 +27,7 @@
 		<a  href="javascript:void(0)" class="delete">Удалить</a>
 		<a  href="javascript:void(0)" class="download">Скачать</a>
 		<a  href="javascript:void(0)" class="createFolder">Создать папку</a>
-		<a  href="javascript:void(0)" class="upload"><input type="file"></a>
+		<a  href="javascript:void(0)" class="upload"><input type="file" multiple="">Загрузить файлы</a>
 	</div>
 	<div class="xdsoft_files table_layout1">
 		<div class="xdsoft_file">

@@ -1,8 +1,12 @@
 <?php
 define('DS', DIRECTORY_SEPARATOR);
+define('DEBUG', false);
 define('ROOT', realpath(dirname(__FILE__).DS.'..').DS);
 define('COOKIE_NAME', 'xdck');
 include_once ROOT.'assets'.DS.'base_controller.php';
+if (!DEBUG) {
+	error_reporting(0);
+}
 session_start();
 class Controller extends BaseController{
 	function __construct() {
@@ -10,7 +14,7 @@ class Controller extends BaseController{
 	}
 	function actionLogin ($req) {
 		if ($this->config['login'] == $req['login'] and $this->config['password'] == $req['password']) {
-			setcookie(COOKIE_NAME, $_COOKIE[COOKIE_NAME] = $this->makeHash(), time() +60*60*3);
+			setcookie(COOKIE_NAME, $_COOKIE[COOKIE_NAME] = $this->makeHash($this->config), time() +60*60*3);
 			$this->error = 0;
 			return true;
 		}

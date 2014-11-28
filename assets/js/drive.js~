@@ -167,7 +167,10 @@
 			login = explorer.find('.xdsoft_login').eq(0);
 			files_box = explorer.find('.xdsoft_files').eq(0);
 			progress_bar = explorer.find('.xdsoft_progressbar>div').eq(0);
-
+			login
+				.on('mousedown', function(event) {
+					event.stopPropagation();
+				})
 			menu
 				.on('mousedown','a', function(event) {
 					if (methods[$(this).attr('class')]) {
