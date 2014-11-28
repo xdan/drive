@@ -2,86 +2,12 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', realpath(dirname(__FILE__).DS.'..').DS);
 define('COOKIE_NAME', 'xdck');
+include_once ROOT.'assets'.DS.'base_controller.php';
 session_start();
-class Controller {
-	private $config = array(
-		'login'=>'demo',
-		'password'=>'demo',
-		'salt' => 'ndcgh;l2;lga',
-		'virtual_root' => ROOT,
-		'time_format' => 'H:i:s d/m/Y',
-		'default_chmod' => 0777
-	);
-	private $phpFileUploadErrors = array(
-	    0 => 'There is no error, the file uploaded with success',
-	    1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
-	    2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
-	    3 => 'The uploaded file was only partially uploaded',
-	    4 => 'No file was uploaded',
-	    6 => 'Missing a temporary folder',
-	    7 => 'Failed to write file to disk.',
-	    8 => 'A PHP extension stopped the file upload.',
-	);
-	public $error = 0;
-	public $data = array();
-
+class Controller extends BaseController{
 	function __construct() {
-		$this->config = array_merge($this->config, include ROOT.'assets/config.php');
-		$this->config['virtual_root'] = realpath($this->config['virtual_root']).DS;
+		parent::__construct();
 	}
-	function cleanDirectory($dir, $remove = false) {
-	    if ($objs = glob($dir."/*")) {
-	        foreach($objs as $obj) {
-	            is_dir($obj) ? $this->cleanDirectory($obj, true) : unlink($obj);
-	        }
-	    }
-	    if ($remove) {
-	        rmdir($dir);
-	    }
-	}
-	function mbtrim($str) {
-		return preg_replace(array('#^[\s\n\r\t]+#u','#[\s\n\r\t]+$#u'), '', $str);
-	}
-	function formatBytes($size, $precision = 2){
-	    $base = log($size) / log(1024);
-	    $suffixes = array('', 'k', 'M', 'G', 'T');
-
-	    return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
-	}
-	function makeHash () {
-		return md5($req['login'].$req['salt'].$req['password']);
-	}
-	function encode () {
-		exit(json_encode(array(
-			'error' => $this->error,
-			'data'	=> $this->data
-		)));
-	}
-	function inRoot($path) {
-		return strpos($path,$this->config['virtual_root']) !== false;
-	}
-	function validatePath ($path = false) {
-		$path = $path ? $path : $this->config['virtual_root'];
-		$path = realpath($path);
-		if (!$this->inRoot($path)) {
-			return $this->config['virtual_root'];
-		}
-		if (!$path) {
-			$this->error = 3;
-			$this->data['msg'] = 'invalid path';
-			return false;
-		}
-		return $path;
-	}
-	function checkAuth () {
-		if (isset($_COOKIE[COOKIE_NAME]) and $_COOKIE[COOKIE_NAME] === $this->makeHash()) {
-			return true;
-		}
-		$this->error = 2;
-		$this->data['msg'] = 'Please auth';
-		return false;
-	}
-
 	function actionLogin ($req) {
 		if ($this->config['login'] == $req['login'] and $this->config['password'] == $req['password']) {
 			setcookie(COOKIE_NAME, $_COOKIE[COOKIE_NAME] = $this->makeHash(), time() +60*60*3);
@@ -227,17 +153,6 @@ class Controller {
 			);
 		}
 		return true;
-	}
-
-
-	function actionUploadImage(){
-		require(ROOT.'assets/UploadHandler.php');
-		$upload_handler = new UploadHandler(null,false);
-		$data = $upload_handler->post(false);
-		$images = array();
-		foreach($data['images'] as $i=>$image)
-			$images[] = array('image'=>$image->name,'error'=>$image->error);
-		$this->data = $images;
 	}
 }
 
