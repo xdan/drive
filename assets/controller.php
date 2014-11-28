@@ -10,6 +10,17 @@ class Controller {
 		'salt' => 'ndcgh;l2;lga',
 		'virtual_root' => ROOT,
 		'time_format' => 'H:i:s d/m/Y',
+		'default_chmod' => 0777
+	);
+	private $phpFileUploadErrors = array(
+	    0 => 'There is no error, the file uploaded with success',
+	    1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+	    2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+	    3 => 'The uploaded file was only partially uploaded',
+	    4 => 'No file was uploaded',
+	    6 => 'Missing a temporary folder',
+	    7 => 'Failed to write file to disk.',
+	    8 => 'A PHP extension stopped the file upload.',
 	);
 	public $error = 0;
 	public $data = array();
@@ -27,6 +38,9 @@ class Controller {
 	    if ($remove) {
 	        rmdir($dir);
 	    }
+	}
+	function mbtrim($str) {
+		return preg_replace(array('#^[\s\n\r\t]+#u','#[\s\n\r\t]+$#u'), '', $str);
 	}
 	function formatBytes($size, $precision = 2){
 	    $base = log($size) / log(1024);
@@ -52,6 +66,11 @@ class Controller {
 		if (!$this->inRoot($path)) {
 			return $this->config['virtual_root'];
 		}
+		if (!$path) {
+			$this->error = 3;
+			$this->data['msg'] = 'invalid path';
+			return false;
+		}
 		return $path;
 	}
 	function checkAuth () {
@@ -76,12 +95,101 @@ class Controller {
 	}
 
 
+	function actionCreateFolder ($req) {
+		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
+		if (!$path) {
+			return false;
+		}
+		$name = $this->mbtrim($req['name']);
+		if (empty($name)) {
+			$this->error = 6;
+			$this->data['msg'] = 'Expected file name';
+			return false;
+		}
+		if (file_exists($path.DS.$name)) {
+			$this->error = 7;
+			$this->data['msg'] = 'File or folder with this name already exists';
+			return false;
+		}
+		mkdir($path.DS.$name, $this->config['default_chmod']);
+	}
+
+	function actionUpload ($req) {
+		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
+		if (!$path) {
+			return false;
+		}
+		if (isset($_FILES['files']) and is_array($_FILES['files']) and isset($_FILES['files']['name']) and is_array($_FILES['files']['name']) and count($_FILES['files']['name'])) {
+			$this->data['msg'] = array();
+			foreach ($_FILES['files']['name'] as $i=>$file) {
+				if ($_FILES['files']['error'][$i]) {
+					$this->data['msg'][] = isset($this->phpFileUploadErrors[$_FILES['files']['error'][$i]]) ? $this->phpFileUploadErrors[$_FILES['files']['error'][$i]] : 'Error';
+					continue;
+				}
+				$tmp_name = $_FILES['files']['tmp_name'][$i];
+				if (move_uploaded_file($tmp_name, $file = $path.DS.$_FILES['files']['name'][$i])) {
+					$info = pathinfo($file);
+					if (isset($this->config['white_extensions']) and count($this->config['white_extensions'])) {
+						if (!in_array($info['extension'], $this->config['white_extensions'])) {
+							unlink($file);
+							$this->data['msg'][] = 'File type not in white list';
+						}
+					}
+					if (isset($this->config['black_extensions']) and count($this->config['black_extensions'])) {
+						if (in_array($info['extension'], $this->config['black_extensions'])) {
+							unlink($file);
+							$this->data['msg'][] = 'File type in black list';
+						}
+					}
+				}
+			}
+			return true;
+		};
+		$this->error = 5;
+		$this->data['msg'] = 'Files did not upload';
+	}
+	function actionDownload ($req) {
+		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
+		if (!$path) {
+			return false;
+		}
+		$file = $this->mbtrim($req['file']);
+		if (!empty($file) and file_exists($path.DS.$file) and is_file($path.DS.$file)) {
+			$file = $path.DS.$file;
+			if (ob_get_level()) {
+				ob_end_clean();
+			}
+			// заставляем браузер показать окно сохранения файла
+			header('Content-Description: File Transfer');
+			header('Content-Type: application/octet-stream');
+			header('Content-Disposition: attachment; filename=' . basename($file));
+			header('Content-Transfer-Encoding: binary');
+			header('Expires: 0');
+			header('Cache-Control: must-revalidate');
+			header('Pragma: public');
+			header('Content-Length: ' . filesize($file));
+			// читаем файл и отправляем его пользователю
+			if ($fd = fopen($file, 'rb')) {
+				while (!feof($fd)) {
+					print fread($fd, 1024);
+				}
+				fclose($fd);
+			}
+	  	} else {
+	  		header('Error: 404');
+			echo 'File not found';
+	  	}
+	  	exit();
+	}
 	function actionDelete ($req) {
 		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
+		if (!$path) {
+			return false;
+		}
 		$file = preg_replace(array('#^[\s\n\r\t]+#u','#[\s\n\r\t]+$#u'), '', $req['file']);
 		if (!empty($file) and file_exists($path.DS.$file)) {
 			if (is_file($path.DS.$file)) {
-				unlink($file);
+				unlink($path.DS.$file);
 			} else if (is_dir($path.DS.$file)){
 				$this->cleanDirectory($path.DS.$file, true);
 			}
@@ -94,8 +202,6 @@ class Controller {
 	function actionGetFilesList ($req) {
 		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
 		if (!$path) {
-			$this->error = 3;
-			$this->data['msg'] = 'invalid path';
 			return false;
 		}
 		$list = glob($path.DS.'*');

@@ -69,7 +69,7 @@ left:0px;
 bottom:0px;
 right:0px;
 background-color: rgba(0,0,0,0.3);
-z-index:3;
+z-index:30;
 display: none;
 }
 .xdsoft_drive .xdsoft_login_form{
@@ -129,6 +129,7 @@ display: none;
 	padding:5px;
 	position:absolute;
 	text-align: left;
+	z-index:1;
 }
 
 .xdsoft_drive .xdsoft_files.table_layout .xdsoft_preview{
@@ -183,7 +184,7 @@ width:16px;
 .xdsoft_drive .xdsoft_context_menu{
 	position: absolute;
 	background-color:#f0f0f0;
-	z-index:1;
+	z-index:2;
 	min-width:130px;
 	display: none;
 }
@@ -196,9 +197,25 @@ width:16px;
 	padding-left:30px;
 	color:inherit;
 	text-decoration: none;
+	position: relative;
 }
-.xdsoft_drive .xdsoft_context_menu a.delete{background: url(../images/delete.svg) no-repeat left 3px center;}
-.xdsoft_drive .xdsoft_context_menu a.download{background: url(../images/download.svg) no-repeat left 3px center;}
+
+.xdsoft_drive .xdsoft_context_menu a input[type=file]{
+	opacity:0;
+	position: absolute;
+	left:0px;
+	top:0px;
+	bottom:0px;
+	right:0px;
+	cursor:pointer;
+	z-index: 2;
+}
+
+.xdsoft_drive .xdsoft_context_menu a.delete{background: url(../images/delete.svg) no-repeat left 6px center;}
+.xdsoft_drive .xdsoft_context_menu a.download{background: url(../images/download.svg) no-repeat left 6px center;}
+.xdsoft_drive .xdsoft_context_menu a.createFolder{background: url(../images/createfolder.svg) no-repeat left 6px center;}
+.xdsoft_drive .xdsoft_context_menu a.upload{background: url(../images/upload.svg) no-repeat left 6px center;}
+.xdsoft_drive .xdsoft_context_menu a{background-size:18px 18px !important;}
 .xdsoft_drive .xdsoft_context_menu a:hover{
 background-color:#3399ff;
 }
@@ -207,9 +224,9 @@ background-color:#3399ff;
 	position:relative;
 	cursor:pointer;
 }
-.xdsoft_drive .xdsoft_files.table_layout .xdsoft_file.xdsoft_upload{
-	width:300px;
-	height:80px;
+.xdsoft_drive .xdsoft_files.table_layout .xdsoft_file.xdsoft_upload,
+.xdsoft_drive .xdsoft_files.table_layout .xdsoft_clearex{
+	display: none;
 }
 .xdsoft_file.xdsoft_upload .work_uploader{
 	opacity:0;
@@ -250,4 +267,25 @@ background-color:#3399ff;
 	background-color: #454DF9;
 	width:45%;
 	height: 1px;
+}
+
+.xdsoft_drive .xdsoft_manage_block{
+	position: absolute;
+	right:5px;
+	bottom:5px;
+	z-index:4;
+}
+.xdsoft_drive .xdsoft_manage_block a img{
+	width:16px;
+	height:16px;
+	opacity:0.5;
+	margin:5px;
+	margin:1px;
+}
+.xdsoft_drive .xdsoft_manage_block a:hover img{
+	opacity:0.7;
+}
+
+.xdsoft_drive .xdsoft_manage_block a.active img{
+	opacity:0.8;
 }

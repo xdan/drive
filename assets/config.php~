@@ -1,3 +1,7 @@
 <?php
-  co
-?>
+return array(
+	'login'=>'demo',
+	'password'=>'demo',
+	'white_extensions' => array(),
+	'black_extensions' => array('php', 'exe', 'js'),
+);

@@ -24,7 +24,7 @@
 			'</div>',
 
 			worker = '<div class="xdsoft_file xdsoft_upload">'+
-					'<input type="file" class="work_uploader">'+
+					'<input multiple="" type="file" class="work_uploader">'+
 					'<a href="javascript:void(0)">+</a>'+
 				'</div>'+
 				'<div class="xdsoft_clearex"></div>',
@@ -132,7 +132,9 @@
 						})
 					}
 				},
-				download: function (file) {alert('download')},
+				download: function (file) {
+					location = './assets/controller.php?action=download&path='+encodeURIComponent(path)+'&file='+file.data('name');
+				},
 				uploadFile: function () {alert('upload')},
 				updateFilesList: function (_path) {
 					send('getFilesList', {path:_path || ''}, function(resp) {
@@ -144,6 +146,17 @@
 							render(resp.data.files);
 						}
 					})
+				},
+				createFolder: function () {
+					var dirname = prompt('Введите название папки');
+					if (dirname) {
+						if (files_box.find('.xdsoft_file.active').data('type') == 'folder') {
+							path = path+'/'+decodeURIComponent(files_box.find('.xdsoft_file.active').data('name'));
+						}
+						send('createFolder', {path:path, name:dirname}, function () {
+							methods.updateFilesList(path)
+						});
+					}
 				}
 			};
 
@@ -167,6 +180,23 @@
 				.on('contextmenu','.xdsoft_file', function(event) {
 
 					menu.find('.download')[$(this).data('type')!='folder' ? 'show' : 'hide']();
+					menu.find('.delete').show();
+
+					menu
+						.css({
+							left: event.clientX,
+							top: event.clientY
+						})
+						.show();
+
+					event.preventDefault();
+					event.stopPropagation();
+					return false;
+				})
+				.on('contextmenu', function(event) {
+
+					menu.find('.download').hide();
+					menu.find('.delete').hide();
 
 					menu
 						.css({
@@ -212,7 +242,7 @@
 						if ($(this).hasClass('xdsoft_upload')) {
 							return;
 						}
-						methods.uploadFile($(this).data('filename'))
+						methods.download($(this))
 					});
 			login
 				.find('.go')
@@ -228,6 +258,36 @@
 							}
 						);
 					});
+			explorer
+				.on('change', 'input[type="file"]', function () {
+					var	files = this.files,
+						len = files.length;
+
+					if(!len) {
+						return false;
+					}
+					var form = new FormData();
+
+					form.append("path", path);
+
+					for (i = 0; i < len; i++) {
+						form.append("files["+i+"]", files[i]);
+					}
+
+					send('upload', form, function(resp) {
+						methods.updateFilesList(path);
+					})
+				})
+			explorer
+				.find('.xdsoft_manage_block a')
+					.on('click', function() {
+						explorer
+							.find('.xdsoft_manage_block a')
+								.removeClass('active')
+						$(this).addClass('active');
+						files_box[$(this).hasClass('table_layout') ? 'addClass' : 'removeClass']('table_layout');
+						return false;
+					})
 			if (getParam('path')) {
 				path = getParam('path');
 			}
