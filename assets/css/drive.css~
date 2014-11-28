@@ -41,7 +41,7 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-.xdsoft_drive *{
+.xdsoft_drive,.xdsoft_drive *{
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
@@ -61,6 +61,10 @@ box-shadow:         3px 3px 12px 0px rgba(50, 50, 50, 0.55);
 	padding:10px;
 	font-family: monospace;
 	position: relative;
+	background-color: #f6f6f6;
+}
+.xdsoft_drive.draghover{
+	border:5px dashed #ccc;
 }
 .xdsoft_drive .xdsoft_login{
 position: absolute;
@@ -91,6 +95,11 @@ display: none;
 	padding:10px;
 	margin-bottom:10px;
 }
+.xdsoft_drive .xdsoft_login.error input[type=text],
+.xdsoft_drive .xdsoft_login.error input[type=password]
+{
+	background-color: #9B0F0F;
+}
 .xdsoft_drive .xdsoft_file{
 	display: block;
 	width:150px;
@@ -119,8 +128,8 @@ display: none;
 }
 .xdsoft_drive .xdsoft_file .xdsoft_filesize,
 .xdsoft_drive .xdsoft_files .xdsoft_timechange{
-	opacity:0.7;
-	font-size:0.8em;
+	opacity:0.9;
+	font-size:0.9em;
 }
 .xdsoft_drive .xdsoft_file .xdsoft_hint{
 	display: none;
@@ -132,7 +141,7 @@ display: none;
 	z-index:1;
 }
 .xdsoft_drive .xdsoft_file.folder .xdsoft_hint{
-
+	display: none !important;
 }
 
 .xdsoft_drive .xdsoft_files.table_layout .xdsoft_preview{
@@ -296,4 +305,60 @@ background-color:#3399ff;
 
 .xdsoft_drive .xdsoft_manage_block a.active img{
 	opacity:0.8;
+}
+.xdsoft_drive .xdsoft_popap_box{
+	position: absolute;
+	top:5px;
+	right:5px;
+	width:260px;
+	z-index:35;
+}
+.xdsoft_drive .xdsoft_popap_box>div{
+	background: rgba(127,127,127,0.4);
+	padding:15px 15px;
+	margin-bottom:10px;
+	position: relative;
+}
+.xdsoft_drive .xdsoft_popap_box>div{
+	background: rgba(256,127,127,0.9);
+	color:#fff;
+}
+.xdsoft_drive .xdsoft_popap_box>div.error0{
+	background: rgba(127, 192, 255, 0.9);
+	color:#fff;
+}
+
+.xdsoft_drive .xdsoft_popap_box>div>a{
+	margin-left:5px;
+	font-weight:700;
+	color:#fff000;
+	position:absolute;
+	right:10px;
+	top:50%;
+	height:15px;
+	margin-top:-7px;
+	display: inline-block;
+	cursor:pointer;
+}
+.xdsoft_drive .xdsoft_status_line{
+	position: absolute;
+	bottom:5px;
+	left:5px;
+	opacity:0.5;
+	text-transform: lowercase;
+}
+
+.xdsoft_drive .xdsoft_exit{
+	display: inline-block;
+	position: absolute;
+	z-index:5;
+	right:5px;
+	top:5px;
+	opacity:0.6;
+}
+.xdsoft_drive .xdsoft_exit:hover{
+	opacity:0.9;
+}
+.xdsoft_drive .xdsoft_exit:active{
+	opacity:1.0;
 }
