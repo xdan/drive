@@ -1,25 +1,21 @@
 <?php
-define('DS', DIRECTORY_SEPARATOR);
-define('DEBUG', false);
-define('ROOT', realpath(dirname(__FILE__).DS.'..').DS);
-define('COOKIE_NAME', 'xdck');
-include_once ROOT.'assets'.DS.'base_controller.php';
+include_once 'base.php';
+
 if (!DEBUG) {
 	error_reporting(0);
 }
-session_start();
+
 class Controller extends BaseController{
 	function __construct() {
 		parent::__construct();
 	}
+
 	function actionLogin ($req) {
-		if ($this->config['login'] == $req['login'] and $this->config['password'] == $req['password']) {
-			setcookie(COOKIE_NAME, $_COOKIE[COOKIE_NAME] = $this->makeHash($this->config), time() +60*60*3);
+		if ($this->user->login($req['login'], $req['password'])) {
 			$this->data['msg'] = '{Autentification is succesfull!}';
 			$this->error = 0;
 			return true;
 		}
-		setcookie('xdck', false);
 		$this->error = 1;
 		$this->data['msg'] = '{Password or username is not correct!}';
 		return false;
@@ -27,7 +23,7 @@ class Controller extends BaseController{
 
 
 	function actionCreateFolder ($req) {
-		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
+		$path = $this->validatePath($this->user->getRoot().@$req['path']);
 		if (!$path) {
 			return false;
 		}
@@ -48,7 +44,7 @@ class Controller extends BaseController{
 	}
 
 	function actionUpload ($req) {
-		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
+		$path = $this->validatePath($this->user->getRoot().@$req['path']);
 		if (!$path) {
 			return false;
 		}
@@ -65,6 +61,7 @@ class Controller extends BaseController{
 					if (isset($this->config['white_extensions']) and count($this->config['white_extensions'])) {
 						if (!in_array($info['extension'], $this->config['white_extensions'])) {
 							unlink($file);
+							$this->error = 5;
 							$this->data['msg'][] = '{File type not in white list}';
 							continue;
 						}
@@ -72,6 +69,7 @@ class Controller extends BaseController{
 					if (isset($this->config['black_extensions']) and count($this->config['black_extensions'])) {
 						if (in_array($info['extension'], $this->config['black_extensions'])) {
 							unlink($file);
+							$this->error = 5;
 							$this->data['msg'][] = '{File type in black list}';
 							continue;
 						}
@@ -85,7 +83,7 @@ class Controller extends BaseController{
 		$this->data['msg'] = '{Files were not downloaded}';
 	}
 	function actionDownload ($req) {
-		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
+		$path = $this->validatePath($this->user->getRoot().@$req['path']);
 		if (!$path) {
 			return false;
 		}
@@ -118,17 +116,17 @@ class Controller extends BaseController{
 	  	exit();
 	}
 	function actionDelete ($req) {
-		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
+		$path = $this->validatePath($this->user->getRoot().@$req['path']);
 		if (!$path) {
 			return false;
 		}
-		$file = preg_replace(array('#^[\s\n\r\t]+#u','#[\s\n\r\t]+$#u'), '', $req['file']);
+		$file = $this->mbtrim($req['file']);
 
 		if (!empty($file) and $file!='..' and  file_exists($path.DS.$file)) {
 			if (is_file($path.DS.$file)) {
 				$this->data['msg'] = '{File} '.$file.' {was deleted}!';
 				unlink($path.DS.$file);
-			} else if (is_dir($path.DS.$file) and $this->inRoot($path.DS.$file) and realpath($path.DS.$file)!=$this->config['virtual_root']){
+			} else if (is_dir($path.DS.$file) and $this->inRoot($path.DS.$file) and realpath($path.DS.$file)!=$this->user->getRoot()){
 				$this->data['msg'] = '{Folder} '.$file.' {was Deleted}!';
 				$this->cleanDirectory($path.DS.$file, true);
 			}
@@ -140,14 +138,14 @@ class Controller extends BaseController{
 		$this->data['msg'] = '{File not exists}';
 	}
 	function actionGetFilesList ($req) {
-		$path = $this->validatePath($this->config['virtual_root'].DS.@$req['path']);
+		$path = $this->validatePath($this->user->getRoot().@$req['path']);
 		if (!$path) {
 			return false;
 		}
 		$list = glob($path.DS.'*');
-		$this->data['path'] = str_replace($this->config['virtual_root'],'',$path);
+		$this->data['path'] = str_replace($this->user->getRoot(),'',$path);
 		$this->data['files'] = array();
-		if ($path!==$this->config['virtual_root'] and $this->inRoot($path)) {
+		if ($path!==$this->user->getRoot() and $this->inRoot($path)) {
 			$this->data['files'][] = array(
 				'name' => '..',
 				'type' => 'folder',
@@ -179,8 +177,24 @@ class Controller extends BaseController{
 		$this->data['files_count'] = $cntfiles;
 		return true;
 	}
-}
+	function actionGetLink ($req) {
+		$path = $this->validatePath($this->user->getRoot().@$req['path']);
+		if (!$path) {
+			return false;
+		}
+		$file = $this->mbtrim($req['file']);
 
+		if (!empty($file) and $file!='..' and  file_exists($path.DS.$file)) {
+			if (is_file($path.DS.$file)) {
+				$this->data['link'] = 'http://'.$_SERVER['HTTP_HOST'].'/assets/controller.php?action=download&path='.rawurlencode($req['path']).'&file='.rawurlencode($file).'&key=';
+			}
+			return true;
+		}
+
+		$this->error = 4;
+		$this->data['msg'] = '{File not exists}';
+	}
+}
 $action = 'action'.strtolower($_REQUEST['action']);
 
 $controller = new Controller();

@@ -4,6 +4,7 @@
 		var res = location.match(new RegExp('[#&?]' + name + '=([^&]*)', 'i'));
 		return (res && res[1] ? decodeURIComponent(res[1]) : false);
 	};
+
 	var ARROWLEFT = 37,
 		ARROWRIGHT = 39,
 		ARROWUP = 38,
@@ -20,6 +21,7 @@
 		VKEY = 86,
 		ZKEY = 90,
 		YKEY = 89;
+
 	var Drive = function () {
 		var explorer = null,
 			menu = null,
@@ -33,6 +35,22 @@
 			status = 'Size:{size} files:{files_count} foldes:{folders_count}',
 
 			popaptpl = '<div class="error{error}">{msg}<a>&times;</a></div>',
+
+			menu_tpl = '<div class="xdsoft_context_menu xdsoft_shadow">'+
+					'<a  href="javascript:void(0)" class="delete">'+lang['delete']+'</a>'+
+					'<a  href="javascript:void(0)" class="download">'+lang.download+'</a>'+
+					'<a  href="javascript:void(0)" class="createFolder">'+lang.createFolder+'</a>'+
+					'<a  href="javascript:void(0)" class="upload"><input type="file" multiple="">'+lang.upload+'</a>'+
+					'<a  href="javascript:void(0)" class="getLink">'+lang.getLink+'</a>'+
+				'</div>',
+
+			login_tpl = '<div class="xdsoft_login">'+
+					'<div class="xdsoft_login_form xdsoft_shadow">'+
+						'<div><input autofocus type="text" class="login" placeholder="'+lang.Enter_login+'"/></div>'+
+						'<div><input type="password" class="password" placeholder="'+lang.Enter_password+'"/></div>'+
+						'<div><input type="button" class="go btn btn-warning" value="'+lang['Sign In']+'"/></div>'+
+					'</div>'+
+				'</div>',
 
 			template = '<div data-type="{type}" data-name="{name_decode}" class="xdsoft_file {type}">'+
 				'<div class="xdsoft_preview"><img src="assets/images/types/{type}.png"></div>'+
@@ -228,6 +246,17 @@
 						}
 					})
 				},
+				getLink: function ($file) {
+					var name = decodeURIComponent(file.data('name'));
+					if (name!='..') {
+						send('getLink', {path: path, file: name}, function(resp) {
+							if (resp.error === 0) {
+								prompt(lang.getLinkMessage, resp.data.link);
+							}
+						})
+					}
+
+				},
 				createFolder: function () {
 					var dirname = prompt(lang['Enter folder name']);
 					if (dirname) {
@@ -262,21 +291,11 @@
 		this.init = function(box) {
 			explorer = $(box);
 
-			menu = $('<div class="xdsoft_context_menu xdsoft_shadow">'+
-					'<a  href="javascript:void(0)" class="delete">'+lang.delete+'</a>'+
-					'<a  href="javascript:void(0)" class="download">'+lang.download+'</a>'+
-					'<a  href="javascript:void(0)" class="createFolder">'+lang.createFolder+'</a>'+
-					'<a  href="javascript:void(0)" class="upload"><input type="file" multiple="">'+lang.upload+'</a>'+
-				'</div>');
+			menu = $(menu_tpl);
+
 			explorer.append(menu);
 
-			login = $('<div class="xdsoft_login">'+
-					'<div class="xdsoft_login_form">'+
-						'<div><input autofocus type="text" class="login" placeholder="'+lang.Enter_login+'"/></div>'+
-						'<div><input type="password" class="password" placeholder="'+lang.Enter_password+'"/></div>'+
-						'<div><input type="button" class="go" value="Sign In"/></div>'+
-					'</div>'+
-				'</div>');
+			login = $(login_tpl);
 
 			explorer.append(login);
 			files_box = explorer.find('.xdsoft_files').eq(0);
@@ -301,6 +320,7 @@
 				.find('a.xdsoft_exit')
 					.on('click', function() {
 						methods.login('','');
+						login.find('input[type=text],input[type=password]').val('');
 					})
 			explorer
 				.on('keydown', function(event) {
@@ -344,8 +364,8 @@
 						return false;
 					}
 				})
-				.on('contextmenu','.xdsoft_file', function(event) {
-					menu.find('.download')[$(this).data('type')!='folder' ? 'show' : 'hide']();
+				.on('contextmenu','.xdsoft_file:not(.xdsoft_upload)', function(event) {
+					menu.find('.download,.getLink')[$(this).data('type')!='folder' ? 'show' : 'hide']();
 					menu.find('.delete').show();
 
 					menu
@@ -361,7 +381,7 @@
 				})
 				.on('contextmenu', function(event) {
 
-					menu.find('.download').hide();
+					menu.find('.download,.getLink').hide();
 					menu.find('.delete').hide();
 
 					menu

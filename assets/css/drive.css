@@ -1,16 +1,4 @@
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+.xdsoft_drive div, span{
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -18,39 +6,17 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
 }
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
+
 .xdsoft_drive,.xdsoft_drive *{
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
-.xdsoft_shadow{
+.xdsoft_drive .xdsoft_shadow{
 -webkit-box-shadow: 3px 3px 12px 0px rgba(50, 50, 50, 0.55);
 -moz-box-shadow:    3px 3px 12px 0px rgba(50, 50, 50, 0.55);
 box-shadow:         3px 3px 12px 0px rgba(50, 50, 50, 0.55);
 }
-.xdsoft_clearex{
+.xdsoft_drive .xdsoft_clearex{
 	float:none;
 	clear:both;
 	width:0px;
@@ -72,7 +38,7 @@ top:0px;
 left:0px;
 bottom:0px;
 right:0px;
-background-color: rgba(0,0,0,0.3);
+background-color: rgba(95, 157, 196, 1);
 z-index:30;
 display: none;
 }
@@ -94,11 +60,15 @@ display: none;
 	height: 40px;
 	padding:10px;
 	margin-bottom:10px;
+	border: 1px solid #ccc;
+	outline: none;
 }
 .xdsoft_drive .xdsoft_login.error input[type=text],
 .xdsoft_drive .xdsoft_login.error input[type=password]
 {
-	background-color: #9B0F0F;
+	border-color: #a94442;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
 }
 .xdsoft_drive .xdsoft_file{
 	display: block;
@@ -107,6 +77,9 @@ display: none;
 	position: relative;
 	height:130px;
 	float:left;
+	cursor:default;
+	text-decoration: none;
+	color:#000;
 }
 .xdsoft_drive .xdsoft_file .xdsoft_preview{
 	height: 70px;
@@ -227,6 +200,7 @@ width:16px;
 .xdsoft_drive .xdsoft_context_menu a.download{background: url(../images/download.svg) no-repeat left 6px center;}
 .xdsoft_drive .xdsoft_context_menu a.createFolder{background: url(../images/createfolder.svg) no-repeat left 6px center;}
 .xdsoft_drive .xdsoft_context_menu a.upload{background: url(../images/upload.svg) no-repeat left 6px center;}
+.xdsoft_drive .xdsoft_context_menu a.getLink{background: url(../images/link.svg) no-repeat left 6px center;}
 .xdsoft_drive .xdsoft_context_menu a{background-size:18px 18px !important;}
 .xdsoft_drive .xdsoft_context_menu a:hover{
 background-color:#3399ff;
@@ -359,6 +333,403 @@ background-color:#3399ff;
 .xdsoft_drive .xdsoft_exit:hover{
 	opacity:0.8;
 }
-.xdsoft_drive .xdsoft_exit:active{
+ .xdsoft_exit:active{
 	opacity:1.0;
 }
+
+.xdsoft_drive .btn {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.xdsoft_drive .btn:focus,
+.xdsoft_drive .btn:active:focus,
+.xdsoft_drive .btn.active:focus,
+.xdsoft_drive .btn.focus,
+.xdsoft_drive .btn:active.focus,
+.xdsoft_drive .btn.active.focus {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.xdsoft_drive .btn:hover,
+.xdsoft_drive .btn:focus,
+.xdsoft_drive .btn.focus {
+  color: #333333;
+  text-decoration: none;
+}
+.xdsoft_drive .btn:active,
+.xdsoft_drive .btn.active {
+  outline: 0;
+  background-image: none;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.xdsoft_drive .btn.disabled,
+.xdsoft_drive .btn[disabled],
+.xdsoft_drive fieldset[disabled] .btn {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.xdsoft_drive .btn-default {
+  color: #333333;
+  background-color: #ffffff;
+  border-color: #cccccc;
+}
+.xdsoft_drive .btn-default:hover,
+.xdsoft_drive .btn-default:focus,
+.xdsoft_drive .btn-default.focus,
+.xdsoft_drive .btn-default:active,
+.xdsoft_drive .btn-default.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-default {
+  color: #333333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+.xdsoft_drive .btn-default:active,
+.xdsoft_drive .btn-default.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-default {
+  background-image: none;
+}
+.xdsoft_drive .btn-default.disabled,
+.xdsoft_drive .btn-default[disabled],
+.xdsoft_drive fieldset[disabled] .btn-default,
+.xdsoft_drive .btn-default.disabled:hover,
+.xdsoft_drive .btn-default[disabled]:hover,
+.xdsoft_drive fieldset[disabled] .btn-default:hover,
+.xdsoft_drive.btn-default.disabled:focus,
+.xdsoft_drive .btn-default[disabled]:focus,
+.xdsoft_drive fieldset[disabled] .btn-default:focus,
+.xdsoft_drive.btn-default.disabled.focus,
+.xdsoft_drive.btn-default[disabled].focus,
+.xdsoft_drive fieldset[disabled] .btn-default.focus,
+.xdsoft_drive .btn-default.disabled:active,
+.xdsoft_drive .btn-default[disabled]:active,
+.xdsoft_drivefieldset[disabled] .btn-default:active,
+.xdsoft_drive.btn-default.disabled.active,
+.xdsoft_drive .btn-default[disabled].active,
+fieldset[disabled] .btn-default.active {
+  background-color: #ffffff;
+  border-color: #cccccc;
+}
+.xdsoft_drive .btn-default .badge {
+  color: #ffffff;
+  background-color: #333333;
+}
+.xdsoft_drive .btn-primary {
+  color: #ffffff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+.xdsoft_drive .btn-primary:hover,
+.xdsoft_drive.btn-primary:focus,
+.xdsoft_drive .btn-primary.focus,
+.xdsoft_drive .btn-primary:active,
+.xdsoft_drive .btn-primary.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-primary {
+  color: #ffffff;
+  background-color: #286090;
+  border-color: #204d74;
+}
+.xdsoft_drive .btn-primary:active,
+.xdsoft_drive .btn-primary.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-primary {
+  background-image: none;
+}
+.xdsoft_drive .btn-primary.disabled,
+.xdsoft_drive .btn-primary[disabled],
+.xdsoft_drive fieldset[disabled] .btn-primary,
+.xdsoft_drive .btn-primary.disabled:hover,
+.xdsoft_drive .btn-primary[disabled]:hover,
+.xdsoft_drive fieldset[disabled] .btn-primary:hover,
+.xdsoft_drive .btn-primary.disabled:focus,
+.xdsoft_drive .btn-primary[disabled]:focus,
+.xdsoft_drive fieldset[disabled] .btn-primary:focus,
+.xdsoft_drive .btn-primary.disabled.focus,
+.xdsoft_drive .btn-primary[disabled].focus,
+.xdsoft_drive fieldset[disabled] .btn-primary.focus,
+.xdsoft_drive .btn-primary.disabled:active,
+.xdsoft_drive .btn-primary[disabled]:active,
+.xdsoft_drive fieldset[disabled] .btn-primary:active,
+.xdsoft_drive .btn-primary.disabled.active,
+.xdsoft_drive .btn-primary[disabled].active,
+.xdsoft_drive fieldset[disabled] .btn-primary.active {
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+.xdsoft_drive  .btn-primary .badge {
+  color: #337ab7;
+  background-color: #ffffff;
+}
+.xdsoft_drive  .btn-success {
+  color: #ffffff;
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}
+.xdsoft_drive  .btn-success:hover,
+.xdsoft_drive .btn-success:focus,
+.xdsoft_drive .btn-success.focus,
+.xdsoft_drive .btn-success:active,
+.xdsoft_drive .btn-success.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-success {
+  color: #ffffff;
+  background-color: #449d44;
+  border-color: #398439;
+}
+.xdsoft_drive .btn-success:active,
+.xdsoft_drive .btn-success.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-success {
+  background-image: none;
+}
+.xdsoft_drive .btn-success.disabled,
+.xdsoft_drive .btn-success[disabled],
+.xdsoft_drive fieldset[disabled] .btn-success,
+.xdsoft_drive .btn-success.disabled:hover,
+.xdsoft_drive .btn-success[disabled]:hover,
+.xdsoft_drive fieldset[disabled] .btn-success:hover,
+.xdsoft_drive .btn-success.disabled:focus,
+.xdsoft_drive .btn-success[disabled]:focus,
+.xdsoft_drive fieldset[disabled] .btn-success:focus,
+.xdsoft_drive .btn-success.disabled.focus,
+.xdsoft_drive .btn-success[disabled].focus,
+.xdsoft_drive fieldset[disabled] .btn-success.focus,
+.xdsoft_drive .btn-success.disabled:active,
+.xdsoft_drive .btn-success[disabled]:active,
+.xdsoft_drive fieldset[disabled] .btn-success:active,
+.xdsoft_drive .btn-success.disabled.active,
+.xdsoft_drive .btn-success[disabled].active,
+.xdsoft_drive fieldset[disabled] .btn-success.active {
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}
+.xdsoft_drive .btn-success .badge {
+  color: #5cb85c;
+  background-color: #ffffff;
+}
+.xdsoft_drive .btn-info {
+  color: #ffffff;
+  background-color: #5bc0de;
+  border-color: #46b8da;
+}
+.xdsoft_drive .btn-info:hover,
+.xdsoft_drive .btn-info:focus,
+.xdsoft_drive .btn-info.focus,
+.xdsoft_drive .btn-info:active,
+.xdsoft_drive .btn-info.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-info {
+  color: #ffffff;
+  background-color: #31b0d5;
+  border-color: #269abc;
+}
+.xdsoft_drive .btn-info:active,
+.xdsoft_drive .btn-info.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-info {
+  background-image: none;
+}
+.xdsoft_drive .btn-info.disabled,
+.xdsoft_drive .btn-info[disabled],
+.xdsoft_drive fieldset[disabled] .btn-info,
+.xdsoft_drive .btn-info.disabled:hover,
+.xdsoft_drive .btn-info[disabled]:hover,
+.xdsoft_drive fieldset[disabled] .btn-info:hover,
+.xdsoft_drive .btn-info.disabled:focus,
+.xdsoft_drive .btn-info[disabled]:focus,
+.xdsoft_drive fieldset[disabled] .btn-info:focus,
+.xdsoft_drive .btn-info.disabled.focus,
+.xdsoft_drive .btn-info[disabled].focus,
+.xdsoft_drive fieldset[disabled] .btn-info.focus,
+.xdsoft_drive .btn-info.disabled:active,
+.xdsoft_drive .btn-info[disabled]:active,
+.xdsoft_drive fieldset[disabled] .btn-info:active,
+.xdsoft_drive .btn-info.disabled.active,
+.xdsoft_drive .btn-info[disabled].active,
+.xdsoft_drive fieldset[disabled] .btn-info.active {
+  background-color: #5bc0de;
+  border-color: #46b8da;
+}
+.xdsoft_drive .btn-info .badge {
+  color: #5bc0de;
+  background-color: #ffffff;
+}
+.xdsoft_drive .btn-warning {
+  color: #ffffff;
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+.xdsoft_drive .btn-warning:hover,
+.xdsoft_drive .btn-warning:focus,
+.xdsoft_drive .btn-warning.focus,
+.xdsoft_drive .btn-warning:active,
+.xdsoft_drive .btn-warning.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-warning {
+  color: #ffffff;
+  background-color: #ec971f;
+  border-color: #d58512;
+}
+.xdsoft_drive .btn-warning:active,
+.xdsoft_drive .btn-warning.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-warning {
+  background-image: none;
+}
+.xdsoft_drive .btn-warning.disabled,
+.xdsoft_drive .btn-warning[disabled],
+.xdsoft_drive fieldset[disabled] .btn-warning,
+.xdsoft_drive .btn-warning.disabled:hover,
+.xdsoft_drive .btn-warning[disabled]:hover,
+.xdsoft_drive fieldset[disabled] .btn-warning:hover,
+.xdsoft_drive .btn-warning.disabled:focus,
+.xdsoft_drive .btn-warning[disabled]:focus,
+.xdsoft_drive fieldset[disabled] .btn-warning:focus,
+.xdsoft_drive .btn-warning.disabled.focus,
+.xdsoft_drive .btn-warning[disabled].focus,
+.xdsoft_drive fieldset[disabled] .btn-warning.focus,
+.xdsoft_drive .btn-warning.disabled:active,
+.xdsoft_drive .btn-warning[disabled]:active,
+.xdsoft_drive fieldset[disabled] .btn-warning:active,
+.xdsoft_drive .btn-warning.disabled.active,
+.xdsoft_drive .btn-warning[disabled].active,
+.xdsoft_drive fieldset[disabled] .btn-warning.active {
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+.xdsoft_drive .btn-warning .badge {
+  color: #f0ad4e;
+  background-color: #ffffff;
+}
+.xdsoft_drive .btn-danger {
+  color: #ffffff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+.xdsoft_drive .btn-danger:hover,
+.xdsoft_drive .btn-danger:focus,
+.xdsoft_drive .btn-danger.focus,
+.xdsoft_drive .btn-danger:active,
+.xdsoft_drive .btn-danger.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-danger {
+  color: #ffffff;
+  background-color: #c9302c;
+  border-color: #ac2925;
+}
+.xdsoft_drive .btn-danger:active,
+.xdsoft_drive .btn-danger.active,
+.xdsoft_drive .open > .dropdown-toggle.btn-danger {
+  background-image: none;
+}
+.xdsoft_drive .btn-danger.disabled,
+.xdsoft_drive .btn-danger[disabled],
+.xdsoft_drive fieldset[disabled] .btn-danger,
+.xdsoft_drive .btn-danger.disabled:hover,
+.xdsoft_drive .btn-danger[disabled]:hover,
+.xdsoft_drive fieldset[disabled] .btn-danger:hover,
+.xdsoft_drive .btn-danger.disabled:focus,
+.xdsoft_drive .btn-danger[disabled]:focus,
+.xdsoft_drive fieldset[disabled] .btn-danger:focus,
+.xdsoft_drive .btn-danger.disabled.focus,
+.xdsoft_drive .btn-danger[disabled].focus,
+.xdsoft_drive fieldset[disabled] .btn-danger.focus,
+.xdsoft_drive .btn-danger.disabled:active,
+.xdsoft_drive .btn-danger[disabled]:active,
+.xdsoft_drive fieldset[disabled] .btn-danger:active,
+.xdsoft_drive .btn-danger.disabled.active,
+.xdsoft_drive .btn-danger[disabled].active,
+.xdsoft_drive fieldset[disabled] .btn-danger.active {
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+.xdsoft_drive .btn-danger .badge {
+  color: #d9534f;
+  background-color: #ffffff;
+}
+.xdsoft_drive .btn-link {
+  color: #337ab7;
+  font-weight: normal;
+  border-radius: 0;
+}
+.xdsoft_drive .btn-link,
+.xdsoft_drive .btn-link:active,
+.xdsoft_drive .btn-link.active,
+.xdsoft_drive .btn-link[disabled],
+fieldset[disabled] .btn-link {
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.xdsoft_drive .btn-link,
+.xdsoft_drive .btn-link:hover,
+.xdsoft_drive .btn-link:focus,
+.xdsoft_drive .btn-link:active {
+  border-color: transparent;
+}
+.xdsoft_drive .btn-link:hover,
+.xdsoft_drive .btn-link:focus {
+  color: #23527c;
+  text-decoration: underline;
+  background-color: transparent;
+}
+.xdsoft_drive .btn-link[disabled]:hover,
+.xdsoft_drive fieldset[disabled] .btn-link:hover,
+.xdsoft_drive .btn-link[disabled]:focus,
+.xdsoft_drive fieldset[disabled] .btn-link:focus {
+  color: #777777;
+  text-decoration: none;
+}
+.xdsoft_drive .btn-lg {
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.33;
+  border-radius: 6px;
+}
+.xdsoft_drive .btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+.xdsoft_drive .btn-xs {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+.xdsoft_drive .btn-block {
+  display: block;
+  width: 100%;
+}
+.xdsoft_drive .btn-block + .btn-block {
+  margin-top: 5px;
+}
+.xdsoft_drive input[type="submit"].btn-block,
+.xdsoft_drive input[type="reset"].btn-block,
+.xdsoft_drive input[type="button"].btn-block {
+  width: 100%;
+}
+.xdsoft_drive .clearfix:before,
+.xdsoft_drive .clearfix:after {
+  content: " ";
+  display: table;
+}
+.xdsoft_drive .clearfix:after {
+  clear: both;
+}
+
