@@ -56,7 +56,7 @@ class Controller extends BaseController{
 					continue;
 				}
 				$tmp_name = $_FILES['files']['tmp_name'][$i];
-				if (move_uploaded_file($tmp_name, $file = $path.DS.$_FILES['files']['name'][$i])) {
+				if (move_uploaded_file($tmp_name, $file = $path.$_FILES['files']['name'][$i])) {
 					$info = pathinfo($file);
 					if (isset($this->config['white_extensions']) and count($this->config['white_extensions'])) {
 						if (!in_array($info['extension'], $this->config['white_extensions'])) {
@@ -75,12 +75,20 @@ class Controller extends BaseController{
 						}
 					}
 					$this->data['msg'][] = '{File} '.$_FILES['files']['name'][$i].' {was upload}';
+				} else {
+					$this->error = 5;
+					if (!is_writable($path)) {
+						$this->data['msg'] = '{destination directory is not writeble}';
+					} else
+						$this->data['msg'] = '{Files were not downloaded}';
+					return false;
 				}
 			}
 			return true;
 		};
 		$this->error = 5;
 		$this->data['msg'] = '{Files were not downloaded}';
+		return false;
 	}
 	function actionDownload ($req) {
 		$path = $this->validatePath($this->user->getRoot().@$req['path']);
@@ -177,6 +185,40 @@ class Controller extends BaseController{
 		$this->data['files_count'] = $cntfiles;
 		return true;
 	}
+	function checkLink($req) {
+		$user = $this->user->get($req['id']);
+		if (!$user) {
+			return false;
+		}
+
+		$path = $this->validatePath($user->getRoot().@$req['path']);
+		if (!$path) {
+			return false;
+		}
+
+		$file = $this->mbtrim($req['file']);
+		if (empty($file) or $file=='..' or  !file_exists($path.DS.$file) or !is_file($path.DS.$file)) {
+			return false;
+		}
+
+		$val = $this->user->makeHash(array('password'=>$req['path'].$user->getId(), 'login'=>$file)) == $req['key'];
+		if (!$val) {
+			if (ob_get_level()) {
+				ob_end_clean();
+			}
+			header('Error: 404');
+			echo $this->i18n('{File not found}');
+			exit();
+		}
+		return true;
+	}
+	function generateLink($path, $file) {
+		return 'http://'.$_SERVER['HTTP_HOST'].'/assets/controller.php?action=download'.
+					'&path='.rawurlencode($path).
+					'&file='.rawurlencode($file).
+					'&id='.rawurlencode($this->user->getId()).
+					'&key='.$this->user->makeHash(array('password'=>$path.$this->user->getId(), 'login'=>$file));
+	}
 	function actionGetLink ($req) {
 		$path = $this->validatePath($this->user->getRoot().@$req['path']);
 		if (!$path) {
@@ -186,7 +228,11 @@ class Controller extends BaseController{
 
 		if (!empty($file) and $file!='..' and  file_exists($path.DS.$file)) {
 			if (is_file($path.DS.$file)) {
-				$this->data['link'] = 'http://'.$_SERVER['HTTP_HOST'].'/assets/controller.php?action=download&path='.rawurlencode($req['path']).'&file='.rawurlencode($file).'&key=';
+				$this->data['link'] = 'http://'.$_SERVER['HTTP_HOST'].'/assets/controller.php?action=download'.
+					'&path='.rawurlencode($req['path']).
+					'&file='.rawurlencode($file).
+					'&id='.rawurlencode($this->user->getId()).
+					'&key='.$this->user->makeHash(array('password'=>$req['path'].$this->user->getId(), 'login'=>$file));
 			}
 			return true;
 		}
@@ -195,11 +241,12 @@ class Controller extends BaseController{
 		$this->data['msg'] = '{File not exists}';
 	}
 }
+
 $action = 'action'.strtolower($_REQUEST['action']);
 
 $controller = new Controller();
 
-if ($controller->checkAuth() or $action==='actionlogin') {
+if ($controller->checkAuth() or $action==='actionlogin' or ($action==='actiondownload' and $controller->checkLink($_REQUEST))) {
 	if (method_exists($controller, $action)) {
 		$controller->$action($_REQUEST);
 	}

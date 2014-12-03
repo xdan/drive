@@ -9,48 +9,76 @@ abstract class XDSoftUser{
 	abstract function logout();
 	abstract function checkAuth();
 	abstract function getRoot();
-	protected function makeHash ($req) {
-		return md5($req['login'].$req['salt'].$req['password']);
-	}
+	abstract function makeHash ($req);
+	abstract function getLogin ();
+	abstract function getId ();
 }
 
-class BaseUser extends XDSoftUser{
+class User extends XDSoftUser{
 	private $config = null;
+	private $salt = null;
+	private $id = null;
+	private $data = null;
+	public $auth = false;
+
 	function __construct($config) {
 		$this->config = $config;
 	}
 	function login($login, $password) {
-		if ($this->config['login'] == $login and $this->config['password'] == $password) {
-			setcookie(COOKIE_NAME, $_COOKIE[COOKIE_NAME] = $this->makeHash($this->config), time() +60*60*3);
-			return true;
+		foreach($this->config['users'] as $id=>$user) {
+			if ($user['login'] == $login and $user['password'] == $password) {
+				$this->id = $id;
+				$this->salt = $user['salt'];
+				$this->data = $user;
+				setcookie(COOKIE_NAME, $_COOKIE[COOKIE_NAME] = $this->makeHash($user), time() + $this->config['cookie_time']);
+				$this->auth = true;
+				return true;
+			}
 		}
+
 		setcookie('xdck', false);
 		return false;
 	}
 	function logout() {
 		setcookie('xdck', false);
 		$_COOKIE[COOKIE_NAME] = '';
+		$this->auth = false;
 	}
 	function checkAuth() {
-		if (isset($_COOKIE[COOKIE_NAME]) and $_COOKIE[COOKIE_NAME] === $this->makeHash($this->config)) {
-			return true;
+		foreach($this->config['users'] as $id=>$user) {
+			$this->id = $id;
+			$this->salt = $user['salt'];
+			if (isset($_COOKIE[COOKIE_NAME]) and $_COOKIE[COOKIE_NAME] === $this->makeHash($user)) {
+				$this->auth = true;
+				return true;
+			}
 		}
 		return false;
 	}
 	function getRoot() {
-		return realpath($this->config['virtual_root']).DS;
+		if ($this->auth) {
+			return realpath($this->config['users'][$this->id]['virtual_root']).DS;
+		} else {
+			return realpath($this->config['virtual_root']).DS;
+		}
+	}
+	function makeHash ($req) {
+		return md5($req['login'].$this->salt.$req['password']);
+	}
+	function getLogin() {
+		return $this->data['login'];
+	}
+	function getId() {
+		return $this->id;
+	}
+	function get($userid) {
+		$classname = __CLASS__;
+		return new $classname($this->config);
 	}
 }
 
 class BaseController {
-	public $config = array(
-		'login'=>'demo',
-		'password'=>'demo',
-		'salt' => 'ndcgh;l2;lga',
-		'virtual_root' => ROOT,
-		'time_format' => 'H:i:s d/m/Y',
-		'default_chmod' => 0777
-	);
+	public $config = array();
 	public $lang = array();
 	protected $user = null;
 	protected $phpFileUploadErrors = array(
@@ -73,7 +101,7 @@ class BaseController {
 		foreach($list[1] as $i=>$key){
 			$this->lang[$key] = $list[2][$i];
 		};
-		$this->user = new BaseUser($this->config);
+		$this->user = new User($this->config);
 	}
 
 	function cleanDirectory($dir, $remove = false) {
@@ -86,15 +114,25 @@ class BaseController {
 	        rmdir($dir);
 	    }
 	}
+
 	function mbtrim($str) {
 		return preg_replace(array('#^[\s\n\r\t]+#u','#[\s\n\r\t]+$#u'), '', $str);
 	}
+
 	function formatBytes($size, $precision = 2){
 	    $base = log($size) / log(1024);
 	    $suffixes = array('', 'k', 'M', 'G', 'T');
 
 	    return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
 	}
+
+	function i18n($str) {
+		foreach($this->lang as $lg=>$lvalue){
+			$str = str_replace('{'.$lg.'}', $lvalue, $str);
+		}
+		return $str;
+	}
+
 	function encode () {
 		if($this->data and isset($this->data['msg'])) {
 			$msgs = is_array($this->data['msg']) ? $this->data['msg'] : array($this->data['msg']);
@@ -102,9 +140,7 @@ class BaseController {
 				$this->data['msg'] = array($this->data['msg']);
 			}
 			foreach($this->data['msg'] as $i => $value) {
-				foreach($this->lang as $lg=>$lvalue){
-					$this->data['msg'][$i] = str_replace('{'.$lg.'}', $lvalue, $this->data['msg'][$i]);
-				}
+				$this->data['msg'][$i] = $this->i18n($value);
 			}
 		}
 		exit(json_encode(array(

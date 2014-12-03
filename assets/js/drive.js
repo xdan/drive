@@ -358,9 +358,9 @@
 					 	break;
 					}
 
+					event.stopPropagation();
 					if (stop) {
 						event.preventDefault();
-						event.stopPropagation();
 						return false;
 					}
 				})
@@ -454,6 +454,9 @@
 					});
 			login
 				.on('mousedown contextmenu keydown', function(event) {
+					if (event.type === 'keydown' && event.which === 13) {
+						login.find('.go').trigger('click');
+					}
 					event.stopPropagation();
 				});
 

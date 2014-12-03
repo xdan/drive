@@ -1,0 +1,3 @@
+[submodule "assets/js/dialog"]
+	path = assets/js/dialog
+	url = https://github.com/xdan/dialog.git

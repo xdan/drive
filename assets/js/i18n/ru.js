@@ -2,7 +2,7 @@ lang = {
 	"Folder": "Папка",
 	"File": "Файл",
 	"was create": "была создана",
-	"was upload": "был согружен",
+	"was upload": "был загружен",
 	"was deleted": "был удален",
 	"was Deleted": "была удалена",
 	"delete" : "Удалить",
@@ -22,7 +22,6 @@ lang = {
 	"Failed to write file to disk.":"Failed to write file to disk.",
 	"A PHP extension stopped the file upload.":"A PHP extension stopped the file upload.",
 	"invalid path": "Не верно задан путь",
-	"invalid path": "Не верно задан путь",
 	"Please auth": "Пожалуйста авторизуйтесь",
 	"Autentification is succesfull!": "Аутентификация прошла успешно",
 	"Password or username is not correct!": "Пароль или логин не верны",
@@ -36,5 +35,6 @@ lang = {
 	"File not exists": "Файл не существует",
 	"Enter folder name": "Введите название папки",
 	"Are you shure?": "Вы уверены?",
-	"getLinkMessage": "Ссылка на файл"
+	"getLinkMessage": "Ссылка на файл",
+	"destination directory is not writeble": "Файл не был закачан. У конечной папки нет прав на запись"
 };
