@@ -192,7 +192,13 @@
 							popap(resp.data.msg, resp.error);
 						}
 						if (checkAuth(resp)) {
-							resp.data && resp.data.role && resp.data.role=='admin' && explorer.find('.xdsoft_users').show();
+
+							if (resp.data && resp.data.role && resp.data.role=='admin') {
+								explorer.find('.xdsoft_users').show();
+							} else {
+								explorer.find('.xdsoft_users').hide();
+							}
+
 							callback && callback(resp);
 						} else {
 							callback1 && callback1(resp);
