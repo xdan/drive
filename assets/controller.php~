@@ -31,8 +31,6 @@ class Controller extends BaseController{
 				$this->data['msg'] = 'User not exist';
 				return false;
 			}
-
-			$user->delete();
 			return true;
 		}
 		$this->error = 10;

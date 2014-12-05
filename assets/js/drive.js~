@@ -353,9 +353,8 @@
 												methods.showUsersDialog.dialog('hide');
 											break;
 											case 'delete':
-												jConfirm(lang['Are you shure?'], function() {
-													methods.deleteUser($(this).closest('tr').data('id'))
-												})
+												if (jConfirm(lang['Are you shure?']))
+												methods.deleteUser($(this).closest('tr').data('id'))
 											break;
 										}
 

@@ -13,7 +13,7 @@
 <body>
 <div class="xdsoft_drive">
 	<a class="xdsoft_exit" href="javascript:void(0)"><img src="assets/images/exit.svg"></a>
-	<a class="xdsoft_users" href="javascript:void(0)"><img src="assets/images/users.svg"></a>
+	<a class="xdsoft_users" href="javascript:void(0)"><img src="assets/images/exit.svg"></a>
 	<div class="xdsoft_manage_block">
 		<a class="tiles_layout active" href="javascript:void(0)"><img src="assets/images/tiles.svg"></a>
 		<a class="table_layout" href="javascript:void(0)"><img src="assets/images/list.svg"></a>

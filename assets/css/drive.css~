@@ -805,9 +805,6 @@ fieldset[disabled] .btn-link {
 	background-color: #D6EFFF;;
 }
 
-.xdsoft_like_form tr td{
-padding:7px 8px;
-}
 .xdsoft_like_form tr td:first-child{
 	font-weight: 700;
 	text-align: right;
