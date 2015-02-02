@@ -1,16 +1,24 @@
-<?php
-return array(
-	array(
-		'login'=>'demo',
-		'password'=>'demo',
-		'virtual_root' => 'demo1'.DS,
-		'salt'=> 'ndcgh;l2;lga',
-		'role'=>'admin'
-	),
-	array(
-		'login'=>'demo2',
-		'password'=>'demo',
-		'virtual_root' => 'demo2'.DS,
-		'salt'=> 'ndcgh;l2;lga',
-	),
+<?php return array (
+  0 => 
+  array (
+    'login' => 'admin',
+    'password' => '3Fox75#d5ghfh',
+    'virtual_root' => '',
+    'salt' => 'anadasdcghsdfs;l2;lga',
+    'role' => 'admin',
+  ),
+  1 => 
+  array (
+    'login' => 'admin12',
+    'password' => '3Fox75#',
+    'virtual_root' => 'user1\\',
+    'salt' => 'anadasdcghsdfs;l2;lga',
+  ),
+  2 => 
+  array (
+    'login' => 'leroy',
+    'virtual_root' => 'asdasdasd/asdasd',
+    'password' => 'parol',
+    'salt' => 'nKTLwgHP',
+  ),
 );

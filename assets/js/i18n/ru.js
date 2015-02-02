@@ -8,6 +8,7 @@ lang = {
 	"delete" : "Удалить",
 	"download" : "Скачать",
 	"createFolder" : "Создать папку",
+	"createUserByFolder" : "Создать пользователя для папки",
 	"getLink" : "Получить ссылку на файл",
 	"upload" : "Загрузить файлы",
 	"Enter_login" : "Введите логин",
@@ -36,5 +37,8 @@ lang = {
 	"Enter folder name": "Введите название папки",
 	"Are you shure?": "Вы уверены?",
 	"getLinkMessage": "Ссылка на файл",
-	"destination directory is not writeble": "Файл не был закачан. У конечной папки нет прав на запись"
+	"destination directory is not writeble": "Файл не был закачан. У конечной папки нет прав на запись",
+	"User not exist": "Пользователя не существует",
+	"Do not access": "У Вас нет доступа к этой операции",
+	"You can not delete youself": "Вы не можете удалять сами себя"
 };

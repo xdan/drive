@@ -122,7 +122,7 @@ class User extends XDSoftUser{
 		return $this->data['role'] ? $this->data['role'] : 'user';
 	}
 	function getId() {
-		return $this->id;
+		return intval($this->id);
 	}
 	function get($userid = null) {
 		$classname = __CLASS__;
@@ -130,8 +130,7 @@ class User extends XDSoftUser{
 
 		if (isset($this->users[$userid])) {
 			$user->data = $this->users[$userid];
-			$user->id = $userid;
-			$user->salt = $this->users[$userid]['salt'];
+			$user->id = intval($userid);
 		}
 
 		return $user;

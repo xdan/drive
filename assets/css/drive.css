@@ -200,6 +200,7 @@ width:16px;
 .xdsoft_drive .xdsoft_context_menu a.delete{background: url(../images/delete.svg) no-repeat left 6px center;}
 .xdsoft_drive .xdsoft_context_menu a.download{background: url(../images/download.svg) no-repeat left 6px center;}
 .xdsoft_drive .xdsoft_context_menu a.createFolder{background: url(../images/createfolder.svg) no-repeat left 6px center;}
+.xdsoft_drive .xdsoft_context_menu a.createUserByFolder{background: url(../images/users.svg) no-repeat left 6px center;}
 .xdsoft_drive .xdsoft_context_menu a.upload{background: url(../images/upload.svg) no-repeat left 6px center;}
 .xdsoft_drive .xdsoft_context_menu a.getLink{background: url(../images/link.svg) no-repeat left 6px center;}
 .xdsoft_drive .xdsoft_context_menu a{background-size:18px 18px !important;}

@@ -26,9 +26,14 @@ class Controller extends BaseController{
 			if (isset($req['id'])) {
 				$user = $this->user->get($req['id']);
 			}
+			if ($this->user->id==$user->id) {
+				$this->error = 18;
+				$this->data['msg'] = '{You can not delete youself}';
+				return false;
+			}
 			if ($user->id === null) {
 				$this->error = 11;
-				$this->data['msg'] = 'User not exist';
+				$this->data['msg'] = '{User not exist}';
 				return false;
 			}
 
@@ -36,7 +41,7 @@ class Controller extends BaseController{
 			return true;
 		}
 		$this->error = 10;
-		$this->data['msg'] = 'Do not access';
+	$this->data['msg'] = '{Do not access}';
 	}
 	function actionSaveUser ($req) {
 		if ($this->user->getRole() == 'admin') {
@@ -55,7 +60,7 @@ class Controller extends BaseController{
 			return true;
 		}
 		$this->error = 10;
-		$this->data['msg'] = 'Do not access';
+		$this->data['msg'] = '{Do not access}';
 	}
 	function actionGetUser ($req) {
 		if ($this->user->getRole() == 'admin') {
@@ -64,7 +69,7 @@ class Controller extends BaseController{
 
 			if (!isset($this->user->users[$uid])) {
 				$this->error = 11;
-				$this->data['msg'] = 'User not exist';
+				$this->data['msg'] = '{User not exist}';
 				return false;
 			}
 
@@ -75,7 +80,7 @@ class Controller extends BaseController{
 			return true;
 		}
 		$this->error = 10;
-		$this->data['msg'] = 'Do not access';
+		$this->data['msg'] = '{Do not access}';
 	}
 	function actionShowUsers ($req) {
 		if ($this->user->getRole() == 'admin') {
@@ -89,7 +94,7 @@ class Controller extends BaseController{
 			return true;
 		}
 		$this->error = 10;
-		$this->data['msg'] = 'Do not access';
+		$this->data['msg'] = '{Do not access}';
 	}
 
 	function actionCreateFolder ($req) {
@@ -189,7 +194,7 @@ class Controller extends BaseController{
 			}
 	  	} else {
 	  		header('Error: 404');
-			echo '{File not found}';
+			echo $this->i18n('{File not exists}');
 	  	}
 	  	exit();
 	}
@@ -274,7 +279,7 @@ class Controller extends BaseController{
 			return false;
 		}
 
-		$val = $this->user->makeHash(array('password'=>$req['path'].$user->getId(), 'login'=>$file)) == $req['key'];
+		$val = $user->makeHash(array('password'=>$req['path'].$user->getId(), 'login'=>$file)) == $req['key'];
 		if (!$val) {
 			if (ob_get_level()) {
 				ob_end_clean();
@@ -302,7 +307,7 @@ class Controller extends BaseController{
 		if (!empty($file) and $file!='..' and  file_exists($path.DS.$file)) {
 			if (is_file($path.DS.$file)) {
 				$this->data['link'] = 'http://'.$_SERVER['HTTP_HOST'].'/assets/controller.php?action=download'.
-					'&path='.rawurlencode($req['path']).
+					'&path='.rawurlencode(str_replace(realpath($this->config['virtual_root']), '', $path)).
 					'&file='.rawurlencode($file).
 					'&id='.rawurlencode($this->user->getId()).
 					'&key='.$this->user->makeHash(array('password'=>$req['path'].$this->user->getId(), 'login'=>$file));

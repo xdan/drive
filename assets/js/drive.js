@@ -40,6 +40,7 @@
 					'<a  href="javascript:void(0)" class="delete">'+lang['delete']+'</a>'+
 					'<a  href="javascript:void(0)" class="download">'+lang.download+'</a>'+
 					'<a  href="javascript:void(0)" class="createFolder">'+lang.createFolder+'</a>'+
+					'<a  href="javascript:void(0)" class="createUserByFolder">'+lang.createUserByFolder+'</a>'+
 					'<a  href="javascript:void(0)" class="upload">'+
 						'<form class="xdsoft_upload_form" method="POST" enctype="multipart/form-data">'+
 							'<input type="file" name="files[]" multiple=""/>'+
@@ -74,7 +75,9 @@
 					'<a href="javascript:void(0)">+</a>'+
 				'</div>'+
 				'<div class="xdsoft_clearex"></div>',
-
+			normalPath = function (_path) {
+				return _path.replace(/[\\\/]+/g,'/')
+			},
 			popap = function (msgs, error) {
 				if (!$.isArray(msgs)) {
 					msgs = [msgs];
@@ -359,8 +362,9 @@
 												methods.showUsersDialog.dialog('hide');
 											break;
 											case 'delete':
+												var userid = $(this).closest('tr').data('id');
 												jConfirm(lang['Are you shure?'], function() {
-													methods.deleteUser($(this).closest('tr').data('id'))
+													methods.deleteUser(userid)
 												})
 											break;
 										}
@@ -415,15 +419,26 @@
 					}
 
 				},
+				createUserByFolder: function (file) {
+					var _path = path, name;
+					if (files_box.find('.xdsoft_file.active').data('type') == 'folder') {
+						name = decodeURIComponent(files_box.find('.xdsoft_file.active').data('name'));
+						if (name!='..') {
+							_path = _path+'/'+name;
+						}
+					}
+					methods.addUser('', '', normalPath(_path),'');
+				},
 				createFolder: function () {
 					//var dirname = prompt(lang['Enter folder name']);
+					var _path = path;
 					jPrompt(lang['Enter folder name'], '' , function (event, dirname) {
 						if (dirname) {
 							if (files_box.find('.xdsoft_file.active').data('type') == 'folder') {
-								path = path+'/'+decodeURIComponent(files_box.find('.xdsoft_file.active').data('name'));
+								_path = _path+'/'+decodeURIComponent(files_box.find('.xdsoft_file.active').data('name'));
 							}
-							send('createFolder', {path:path, name:dirname}, function (resp) {
-								methods.updateFilesList(path)
+							send('createFolder', {path:_path, name:dirname}, function (resp) {
+								methods.updateFilesList(_path)
 								updateStatus(resp);
 							});
 						}
@@ -531,6 +546,7 @@
 				})
 				.on('contextmenu','.xdsoft_file:not(.xdsoft_upload)', function(event) {
 					menu.find('.download,.getLink')[$(this).data('type')!='folder' ? 'show' : 'hide']();
+					menu.find('.createUserByFolder')[$(this).data('type')=='folder' ? 'show' : 'hide']();
 					menu.find('.delete').show();
 
 					menu
@@ -545,9 +561,9 @@
 					return false;
 				})
 				.on('contextmenu', function(event) {
-
 					menu.find('.download,.getLink').hide();
 					menu.find('.delete').hide();
+					menu.find('.createUserByFolder').show();
 
 					menu
 						.css({
